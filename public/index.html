@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <input type="text"  id="txt">
+    <button>click me</button>
+    <div id="container"></div>
+</body>
+<script>
+    let txt = document.getElementById('txt')
+    let btn = document.getElementsByTagName('button')[0];
+    let container = document.getElementById('container');
+    async function deepseek(answer,container) {
+        const resp = await fetch('/api/deepseek', {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ msg: answer })
+        })
+
+        const textDecoder = new TextDecoder('utf-8');
+        const reader =  resp.body.getReader();
+        while(1){
+  
+        const {done,value} = await reader.read();
+        if(done){
+            break
+        }
+        container.innerText += textDecoder.decode(value)
+        }
+    }
+    btn.onclick = function () {
+       deepseek(txt.value,container)
+    }
+</script>
+
+</html>
